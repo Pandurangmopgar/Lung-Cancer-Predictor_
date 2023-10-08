@@ -1,0 +1,38 @@
+
+
+
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lung Cancer Predictor</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+
+</head>
+<body>
+    <form id="image-form" action="/predict" method="post" enctype="multipart/form-data">
+        <input type="file" id="image-input" name="image">
+        <button type="submit">Predict</button>
+    </form>
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('image-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const file = document.getElementById('image-input').files[0];
+            const formData = new FormData();
+            formData.append('image', file);
+
+            const response = await fetch('/predict', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+            document.getElementById('result').innerText = `Prediction: ${data.prediction}`;
+        });
+    </script>
+</body>
+</html>

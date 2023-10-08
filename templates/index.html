@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lung Cancer Predictor</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <style>
+        body {
+            background-image: url('https://www.capestart.com/wp-content/uploads/2020/09/1-1-scaled.jpg');
+            background-size: cover;
+            font-family: Arial, sans-serif;
+        }
+        
+           
+            .container {
+                background-color: rgba(0, 0, 0, 0.7);
+                padding: 30px;
+                border-radius: 15px;
+                box-shadow: 0px 0px 15px 5px rgba(0,0,0,0.2);
+                margin: 50px auto;
+                width: 350px;
+                text-align: center;
+            }
+            h1 {
+                font-size: 2em;
+                margin-bottom: 20px;
+            }
+            .upload-box {
+                border: 3px dashed #00bcd4;
+                padding: 20px;
+                text-align: center;
+                cursor: pointer;
+                margin-top: 20px;
+                transition: all 0.3s ease;
+            }
+            .upload-box:hover {
+                background-color: rgba(0, 188, 212, 0.1);
+            }
+            #file-name {
+                margin-top: 10px;
+                font-size: 0.9em;
+                color: #00bcd4;
+            }
+            #preview {
+                margin-top: 15px;
+                border: 3px solid #00bcd4;
+                max-width: 100%;
+            }
+            button {
+                margin-top: 30px;
+                padding: 12px 25px;
+                font-size: 18px;
+                cursor: pointer;
+                background-color: #00bcd4;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                transition: all 0.3s ease;
+            }
+            button:hover {
+                background-color: #008c9e;
+            }
+            #result {
+                margin-top: 20px;
+                font-size: 24px;
+                font-weight: bold;
+            }
+                 h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: #ffffff;
+            text-shadow: 2px 2px 4px #000000;
+            background: -webkit-linear-gradient(#eee, #ffffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+        }
+         #file-name, #result, span {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: rgb(105, 12, 181);
+            text-shadow: 2px 2px 4px #c3e48a;
+            background: -webkit-linear-gradient(#eee, #ffffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+        }
+        button {
+            /* ...existing styles... */
+            text-shadow: 2px 2px 4px #000000;
+            background: -webkit-linear-gradient(#e61c92, #ffffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;  /* Needed for Firefox */
+        }
+        h1::before {
+            content: '🔬';
+            font-size: 0.8em;
+            position: absolute;
+            left: -30px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+            /* ...existing styles... */
+           
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Lung Cancer Predictor</h1>
+        <!-- <form id="image-form" action="/predict" method="post" enctype="multipart/form-data">
+            <input type="file" id="image-input" name="image" onchange="previewImage(event)">
+            <img id="preview">
+            <button type="submit">Predict</button>
+        </form> -->
+        <form id="image-form" action="/predict" method="post" enctype="multipart/form-data">
+            <div class="upload-box" onclick="document.getElementById('image-input').click();">
+                <span>Upload Image</span>
+            </div>
+            <input type="file" id="image-input" name="image" onchange="previewImage(event); updateFileName();">
+            <div id="file-name"></div>
+            <img id="preview">
+            <button type="submit">Predict</button>
+        </form>
+        <div id="result"></div>
+    </div>
+
+    <script>
+
+        function previewImage(event) {
+            const preview = document.getElementById('preview');
+            const fileNameDisplay = document.getElementById('file-name');
+            
+            preview.src = URL.createObjectURL(event.target.files[0]);
+            fileNameDisplay.textContent = event.target.files[0].name;
+
+            preview.onload = function() {
+                URL.revokeObjectURL(preview.src);
+            }
+        }
+
+        function previewImage(event) {
+            const preview = document.getElementById('preview');
+            preview.src = URL.createObjectURL(event.target.files[0]);
+            preview.onload = function() {
+                URL.revokeObjectURL(preview.src);
+            }
+        }
+
+        document.getElementById('image-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const file = document.getElementById('image-input').files[0];
+            const formData = new FormData();
+            formData.append('image', file);
+
+            const response = await fetch('/predict', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+            document.getElementById('result').innerText = `Prediction: ${data.prediction}`;
+        });
+        function updateFileName() {
+            const input = document.getElementById('image-input');
+            const fileName = document.getElementById('file-name');
+            fileName.textContent = `Selected file: ${input.files[0].name}`;
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
